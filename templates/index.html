@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Management System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+    <h1>
+        <img src="{{ url_for('static', filename='logo.webp') }}" 
+             alt="Library Logo" 
+             style="width: 80px; height: 80px; vertical-align: middle; margin-right: 15px;">
+        CBIT Library Management System
+    </h1>
+    <p>Manage your library efficiently with our modern system</p>
+</div>
+
+        <!-- Tabs Navigation -->
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="student-search">
+                <i class="fas fa-search"></i> Student Search
+            </button>
+            <button class="tab-btn" data-tab="librarian-login" id="librarianLoginBtn">
+                <i class="fas fa-user-lock"></i> Librarian Login
+            </button>
+            <button class="tab-btn librarian-section hidden" data-tab="librarian-view" id="loginBtn">
+                <i class="fas fa-book"></i> Manage Books
+            </button>
+            <button class="tab-btn librarian-section hidden" data-tab="librarian-issued">
+                <i class="fas fa-history"></i> Issued Books
+            </button>
+            <button class="tab-btn librarian-section hidden" data-tab="librarian-actions">
+                <i class="fas fa-tasks"></i> Quick Actions
+            </button>
+            <button class="tab-btn hidden" id="logoutBtn">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </div>
+
+        <!-- Student Search Tab -->
+        <div id="student-search" class="tab-content active">
+            <div class="card">
+                <h2 class="card-title">
+                    <i class="fas fa-search"></i> Search Books
+                </h2>
+                <form id="searchForm">
+                    <div class="form-group">
+                        <label for="searchType">Search By:</label>
+                        <select id="searchType" class="form-control">
+                            <option value="title">Title</option>
+                            <option value="author">Author</option>
+                            <option value="id">Book ID</option>
+                        </select>
+                    </div>
+                    <div class="search-bar">
+                        <input type="text" id="searchQuery" class="form-control" 
+                               placeholder="Enter search term..." required>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-search"></i> Search
+                        </button>
+                    </div>
+                </form>
+                
+                <h3 class="card-title" style="margin-top: 30px;">
+                    <i class="fas fa-books"></i> All Books
+                    <button class="btn btn-primary" id="loadAllBooks" style="margin-left: auto;">
+                        <i class="fas fa-sync"></i> Refresh
+                    </button>
+                </h3>
+                <div class="books-grid" id="searchResults">
+                    <!-- Search results will appear here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Librarian Login Tab -->
+        <div id="librarian-login" class="tab-content">
+            <div class="login-container">
+                <div class="card">
+                    <h2 class="card-title">
+                        <i class="fas fa-user-lock"></i> Librarian Login
+                    </h2>
+                    <form id="loginForm">
+                        <div class="form-group">
+                            <label for="username">Username:</label>
+                            <input type="text" id="username" class="form-control" 
+                                   placeholder="Enter username" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Password:</label>
+                            <input type="password" id="password" class="form-control" 
+                                   placeholder="Enter password" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">
+                            <i class="fas fa-sign-in-alt"></i> Login
+                        </button>
+                    </form>
+                    <div style="margin-top: 20px; color: var(--light-text); text-align: center;">
+                        <p>Demo Credentials:</p>
+                        <p><strong>Username:</strong> librarian</p>
+                        <p><strong>Password:</strong> library123</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Librarian View Books Tab -->
+        <div id="librarian-view" class="tab-content">
+            <div class="librarian-info">
+                <div>
+                    <h3><i class="fas fa-user-tie"></i> Librarian Dashboard</h3>
+                    <p>Manage all library books</p>
+                </div>
+                <button class="btn btn-primary" id="loadAllBooksDashboard">
+                    <i class="fas fa-sync"></i> Refresh
+                </button>
+            </div>
+            
+            <div class="card">
+                <h2 class="card-title">
+                    <i class="fas fa-book"></i> All Books in Library
+                </h2>
+                <div class="books-grid" id="allBooks">
+                    <!-- All books will appear here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Issued Books Tab -->
+        <div id="librarian-issued" class="tab-content">
+            <div class="librarian-info">
+                <div>
+                    <h3><i class="fas fa-history"></i> Issued Books</h3>
+                    <p>Track all currently issued books</p>
+                </div>
+                <button class="btn btn-primary" id="refreshIssued">
+                    <i class="fas fa-sync"></i> Refresh
+                </button>
+            </div>
+            
+            <div class="card">
+                <h2 class="card-title">
+                    <i class="fas fa-book-open"></i> Currently Issued Books
+                </h2>
+                <div class="books-grid" id="issuedBooks">
+                    <!-- Issued books will appear here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Librarian Actions Tab -->
+        <div id="librarian-actions" class="tab-content">
+            <div class="librarian-info">
+                <div>
+                    <h3><i class="fas fa-tasks"></i> Quick Actions</h3>
+                    <p>Perform library operations</p>
+                </div>
+            </div>
+            
+            <div class="books-grid">
+                <!-- Add Book Card -->
+                <div class="card">
+                    <h2 class="card-title">
+                        <i class="fas fa-plus-circle"></i> Add New Book
+                    </h2>
+                    <form id="addBookForm">
+                        <div class="form-group">
+                            <label for="bookTitle">Title:</label>
+                            <input type="text" id="bookTitle" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="bookAuthor">Author:</label>
+                            <input type="text" id="bookAuthor" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="bookISBN">ISBN:</label>
+                            <input type="text" id="bookISBN" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="bookGenre">Genre:</label>
+                            <input type="text" id="bookGenre" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="bookYear">Year:</label>
+                            <input type="number" id="bookYear" class="form-control" 
+                                   min="1800" max="2024" required>
+                        </div>
+                        <button type="submit" class="btn btn-success" style="width: 100%;">
+                            <i class="fas fa-save"></i> Add Book
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Issue Book Card -->
+                <div class="card">
+                    <h2 class="card-title">
+                        <i class="fas fa-share-square"></i> Issue Book
+                    </h2>
+                    <form id="issueBookForm">
+                        <div class="form-group">
+                            <label for="issueBookId">Book ID:</label>
+                            <input type="text" id="issueBookId" class="form-control" 
+                                   placeholder="e.g., B001" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="studentId">Student ID:</label>
+                            <input type="text" id="studentId" class="form-control" 
+                                   placeholder="e.g., S1001" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="returnDate">Return Date:</label>
+                            <input type="date" id="returnDate" class="form-control" required>
+                        </div>
+                        <button type="submit" class="btn btn-warning" style="width: 100%;">
+                            <i class="fas fa-handshake"></i> Issue Book
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Return Book Card -->
+                <div class="card">
+                    <h2 class="card-title">
+                        <i class="fas fa-undo"></i> Return Book
+                    </h2>
+                    <form id="returnBookForm">
+                        <div class="form-group">
+                            <label for="returnBookId">Book ID:</label>
+                            <input type="text" id="returnBookId" class="form-control" 
+                                   placeholder="e.g., B001" required>
+                        </div>
+                        <button type="submit" class="btn btn-danger" style="width: 100%;">
+                            <i class="fas fa-check-circle"></i> Return Book
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
